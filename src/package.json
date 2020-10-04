@@ -1,0 +1,7 @@
+{
+  "name": "anochat",
+  "version": "1.0.0",
+  "description": "Anonymous chat!",
+  "main": "index.js",
+  "license": "MIT"
+}
