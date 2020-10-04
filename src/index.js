@@ -22,13 +22,14 @@ router.get('/greeting', (req, res) => {
 router.post('/chats', (req, res) => {
   const chatId = uuidv4();
   chats.push(chatId);
+  console.log("chat created " + chatId)
   res.status(201)
-    .send(chatId);
+    .json(chatId);
 });
 
 router.get('/chats', (req, res) => {
   res.status(200)
-    .send(chats);
+    .json(chats);
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}!`));
