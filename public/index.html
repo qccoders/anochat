@@ -15,7 +15,7 @@ function newChat() {
     .then(json => console.log(json));
 }
 
-const ws = new WebSocket('ws://localhost:8080');
+const ws = new WebSocket('ws://localhost:8080?chat=lobby');
 ws.onopen = () => { 
   console.log('Now connected'); 
 };
