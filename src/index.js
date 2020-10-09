@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
+const WebSocket = require('ws');
 
 const port = 3000;
 const app = express();
@@ -30,6 +31,21 @@ router.post('/chats', (req, res) => {
 router.get('/chats', (req, res) => {
   res.status(200)
     .json(chats);
+});
+
+const webSocketServer = new WebSocket.Server({ port: 8080 });
+ 
+webSocketServer.on('connection', function connection(webSocket) {
+  console.log(`new client connected! ${webSocketServer.clients.length} total.`);
+
+  webSocket.on('message', message => {
+    console.log('received: %s', message);
+    webSocketServer.clients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(message);
+      }
+    });
+  });
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}!`));

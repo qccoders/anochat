@@ -1,6 +1,8 @@
 Hello, QC Coders!
 
 <button onclick="newChat()"></button>
+<input
+<button onclick="send()">send</button>
 
 <script>
 function newChat() {
@@ -8,4 +10,20 @@ function newChat() {
     .then(response => response.json())
     .then(json => console.log(json));
 }
+
+const ws = new WebSocket('ws://localhost:8080');
+ws.onopen = () => { 
+  console.log('Now connected'); 
+};
+
+ws.onmessage = (event) => {
+    console.log(event);
+//   const messages = JSON.parse(event.data);
+//   messages.forEach(addMessage);
+};
+
+function send() {
+    ws.send('test')
+}
+
 </script>
