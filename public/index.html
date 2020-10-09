@@ -1,8 +1,12 @@
 Hello, QC Coders!
 
 <button onclick="newChat()"></button>
-<input
+<input id="input"></input>
 <button onclick="send()">send</button>
+
+<ul id="chat">
+
+</ul>
 
 <script>
 function newChat() {
@@ -20,10 +24,11 @@ ws.onmessage = (event) => {
     console.log(event);
 //   const messages = JSON.parse(event.data);
 //   messages.forEach(addMessage);
+    document.getElementById("chat").innerHTML += `<li>${event.data}</li>`;
 };
 
 function send() {
-    ws.send('test')
+    ws.send(document.getElementById("input").value)
 }
 
 </script>
