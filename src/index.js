@@ -30,16 +30,24 @@ router.get('/chats', (req, res) => {
 });
 
 const webSocketServer = new WebSocket.Server({ port: 8080 });
+
 const getChatById = (id) => {
   const foundChat = chats.find(chat => {
-    console.log(chat); 
+    //console.log(chat); 
     if (chat.name === id){
       return true;
     }
    return false;
   })
   return foundChat;
-} 
+}
+
+const removeChatClient = (id, client) => {
+  const foundChat = getChatById(id);
+
+  foundChat.clients = foundChat.clients.filter(c => c !== client);
+};
+
 webSocketServer.on('connection', (webSocket, request) => {
   const { chatId } = url.parse(request.url, true).query;
 
@@ -49,9 +57,19 @@ webSocketServer.on('connection', (webSocket, request) => {
     return;
   }
 
+  // find the chat that matches the given id
   const foundChat = getChatById(chatId);
+
+  // add the newly connected client to the list of 
+  // clients for the chat
   foundChat.clients.push(webSocket);
-  console.log(`new client connected to chat ${chatId}!`);
+  console.log(`new client connected to chat ${chatId}! total: ${foundChat.clients.length}`);
+
+  webSocket.on('close', () => {
+    removeChatClient(chatId, webSocket);
+    console.log(`client disconnected from chat ${chatId}. total: ${foundChat.clients.length}`);
+  });
+
   webSocket.on('message', message => {
     
     console.log('[%s] received: %s', chatId, message);
@@ -61,18 +79,18 @@ webSocketServer.on('connection', (webSocket, request) => {
       webSocket.terminate();
       return;
     }
-    console.log("foundChat", foundChat)
+    //console.log("foundChat", foundChat)
     webSocketServer.clients.forEach(client => {
       // console.log(client);
       if (client.readyState !== WebSocket.OPEN) {
         return
       }
       if (foundChat.clients.includes(client)) {
-        console.log("match");
+        //console.log("match");
         client.send(message);
       }
       else {
-        console.log("no match");
+        //console.log("no match");
       }
     });
   });
